@@ -1,5 +1,6 @@
 darts
 tensorflow_recommenders
+tensorrt
 scikit_learn
 numpy
 pandas
