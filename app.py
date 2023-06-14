@@ -8,11 +8,12 @@ from src.Hybrid_recommender import HybridRecommender
 st.set_page_config(page_title="Dealing with Seasonality in Recommendation Systems", 
                    page_icon="🧊")
 
-
+@st.cache_resource
 def init_call():
     hybrid = HybridRecommender()
     return hybrid
 
+@st.cache_resource
 def layer1_call(user_ratings):
     global hybrid
     hybrid.layer1(user_ratings)
@@ -33,16 +34,8 @@ def layer4_call(n):
     
     return recommendations_with_seasonality
 
-
-try:
-    hybrid = init_call()
-except Exception as e:
-    print(f"{e}")
-    st.write(f"{e}")
+hybrid = init_call()  
     
-    
-
-
 movie_dict = joblib.load("src/data/movie_dict.pkl")
 movie_df = pd.DataFrame(list(movie_dict.values()), columns=['Movies'])
 movie_df['Ratings'] = None
