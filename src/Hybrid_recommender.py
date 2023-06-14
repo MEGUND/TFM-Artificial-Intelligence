@@ -14,10 +14,10 @@ from darts.dataprocessing.transformers import Scaler
 
 class HybridRecommender:
     def __init__(self) -> None:
-        self.df = pd.read_csv('data/master_data.zip', compression="zip")[["userId", "movieId", "rating"]]
+        self.df = pd.read_csv('src/data/master_data.zip', compression="zip")[["userId", "movieId", "rating"]]
         #Movie names
-        self.movie_dict = joblib.load("data/movie_dict.pkl")
-        self.movie_to_id_dict = joblib.load("data/movie_to_id.pkl")
+        self.movie_dict = joblib.load("src/data/movie_dict.pkl")
+        self.movie_to_id_dict = joblib.load("src/data/movie_to_id.pkl")
         
         # Built user-item matrix
         self.pivot = self.df.pivot(
@@ -28,8 +28,8 @@ class HybridRecommender:
         
         # Model has to be re-built due to load issues
 
-        unique_movie_ids = joblib.load("data/unique_movie_ids.pkl")
-        unique_user_ids = joblib.load("data/unique_user_ids.pkl")
+        unique_movie_ids = joblib.load("src/data/unique_movie_ids.pkl")
+        unique_user_ids = joblib.load("src/data/unique_user_ids.pkl")
 
         class ModelRanking(tf.keras.Model):
 
@@ -98,22 +98,22 @@ class HybridRecommender:
             "movie_id": np.array(["0"])
         })
 
-        self.recommendation_model.load_weights('data/recommendation_model_weights.h5')
+        self.recommendation_model.load_weights('src/data/recommendation_model_weights.h5')
         
         # Movies to predict
         all_movies = np.array(list(self.movie_dict.keys()))
-        excluded_movies = np.array(joblib.load("data/excluded_movie_ids.pkl"))
+        excluded_movies = np.array(joblib.load("src/data/excluded_movie_ids.pkl"))
         exc_mask = np.isin(all_movies, excluded_movies, invert=True)
         self.candidate_movies = all_movies[exc_mask]
         
         #Forecast loads
-        self.forecast_model = TFTModel.load("data/forecasting/forecasting-model.pkl")
-        self.target_ts_scaled_dict = joblib.load("data/forecasting/target_ts_scaled_dict.pkl")
+        self.forecast_model = TFTModel.load("src/data/forecasting/forecasting-model.pkl")
+        self.target_ts_scaled_dict = joblib.load("src/data/forecasting/target_ts_scaled_dict.pkl")
         self.id_to_order = dict(zip(list(self.target_ts_scaled_dict.keys()), range(len(self.target_ts_scaled_dict.keys()))))
         self.id_to_order = {str(key): value for key,value in self.id_to_order.items()}
         self.order_to_id = {value:key for key,value in self.id_to_order.items()}
-        self.covariate_ts_scaled_dict = joblib.load("data/forecasting/covariate_ts_scaled_dict.pkl")
-        self.target_scaler = joblib.load("data/forecasting/target_scaler.pkl")
+        self.covariate_ts_scaled_dict = joblib.load("src/data/forecasting/covariate_ts_scaled_dict.pkl")
+        self.target_scaler = joblib.load("src/data/forecasting/target_scaler.pkl")
         
                 
     def layer1(self, user_ratings: dict):
