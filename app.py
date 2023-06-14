@@ -34,7 +34,15 @@ def layer4_call(n):
     return recommendations_with_seasonality
 
 
-hybrid = init_call()
+try:
+    hybrid = init_call()
+except Exception as e:
+    print(f"{e}")
+    st.write(f"{e}")
+    
+    
+
+
 movie_dict = joblib.load("src/data/movie_dict.pkl")
 movie_df = pd.DataFrame(list(movie_dict.values()), columns=['Movies'])
 movie_df['Ratings'] = None
