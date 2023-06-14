@@ -9,12 +9,10 @@ st.set_page_config(page_title="Dealing with Seasonality in Recommendation System
                    page_icon="🧊")
 
 
-@st.cache_resource
 def init_call():
     hybrid = HybridRecommender()
     return hybrid
 
-@st.cache_resource
 def layer1_call(user_ratings):
     global hybrid
     hybrid.layer1(user_ratings)
